@@ -1,0 +1,11 @@
+- name: generate node configuration for kubeadm join
+  template:
+    src: node_config_v1.12.yml.tpl
+    dest: /root/node_config.yml
+    owner: root
+    group: root
+    mode: 0664
+
+- name: join worker node
+  shell: kubeadm join --config /root/node_config.yml
+

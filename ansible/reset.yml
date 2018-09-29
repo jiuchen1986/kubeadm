@@ -1,0 +1,11 @@
+- hosts: all
+  become: yes
+  tasks:
+  - name: reset on each node
+    shell: kubeadm reset -f
+
+- hosts: master
+  become: yes
+  tasks:
+  - name: remove .kube dir
+    shell: rm -rf /root/.kube

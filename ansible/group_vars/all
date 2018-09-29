@@ -1,0 +1,2 @@
+master_ip: 10.210.55.251
+cgroup_driver: cgroupfs
