@@ -1,0 +1,39 @@
+- name: add prometheus user
+  shell: useradd prometheus -s /sbin/nologin
+  ignore_errors: yes
+
+- name: downlad node_exporter
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
+    dest: /usr/local
+    remote_src: yes
+
+- name: copy binary to /usr/bin
+  copy:
+    src: /usr/local/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
+    dest: /usr/bin
+    remote_src: yes
+    owner: prometheus
+    mode: 0744
+    
+- name: copy node_exporter service file
+  copy:
+    src: node_exporter.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: 0644
+
+# - name: copy env file for node_exporter service
+  # copy:
+    # src: node_exporter
+    # dest: /etc/default
+    # owner: root
+    # group: root
+    # mode: 0644
+
+- name: start node_exporter's service
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: yes

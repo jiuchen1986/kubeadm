@@ -1,2 +1,3 @@
 master_ip: 10.210.55.251
 cgroup_driver: cgroupfs
+node_exporter_version: 0.16.0

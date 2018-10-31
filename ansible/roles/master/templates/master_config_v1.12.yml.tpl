@@ -30,6 +30,18 @@ etcd:
   local:
     dataDir: /var/lib/etcd
     image: ""
+    extraArgs:
+      listen-client-urls: "https://127.0.0.1:2379,https://10.210.55.251:2379"
+      advertise-client-urls: "https://10.210.55.251:2379"
+      listen-peer-urls: "https://10.210.55.251:2380"
+      initial-advertise-peer-urls: "https://10.210.55.251:2380"
+      initial-cluster: "ubuntu-251=https://10.210.55.251:2380"
+    serverCertSANs:
+      - ubuntu-251
+      - 10.210.55.251
+    peerCertSANs:
+      - ubuntu-251
+      - 10.210.55.251
 imageRepository: k8s.gcr.io
 kind: ClusterConfiguration
 kubernetesVersion: v1.12.0
@@ -38,6 +50,18 @@ networking:
   podSubnet: "192.168.0.0/16"
   serviceSubnet: 10.96.0.0/12
 unifiedControlPlaneImage: ""
+apiServerExtraArgs:
+  feature-gates: "AttachVolumeLimit=false"
+  enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota"
+  disable-admission-plugins: "NodeRestriction"
+controllerManagerExtraArgs:
+  feature-gates: "AttachVolumeLimit=false"
+  address: 0.0.0.0
+schedulerExtraArgs:
+  feature-gates: "AttachVolumeLimit=false"
+  address: 0.0.0.0
+#featureGates:
+#  DynamicKubeletConfig: true
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 bindAddress: 0.0.0.0
@@ -150,3 +174,5 @@ staticPodPath: /etc/kubernetes/manifests
 streamingConnectionIdleTimeout: 4h0m0s
 syncFrequency: 1m0s
 volumeStatsAggPeriod: 1m0s
+#featureGates:
+#  DynamicKubeletConfig: true

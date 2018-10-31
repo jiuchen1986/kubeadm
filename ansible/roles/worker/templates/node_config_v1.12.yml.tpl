@@ -13,3 +13,5 @@ nodeRegistration:
   name: {{ ansible_hostname }}
 tlsBootstrapToken: abcdef.0123456789abcdef
 token: abcdef.0123456789abcdef
+#featureMaps:
+#  DynamicKubeletConfig: true
