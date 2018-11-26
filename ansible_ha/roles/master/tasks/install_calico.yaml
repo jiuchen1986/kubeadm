@@ -1,0 +1,9 @@
+- name: install calico rbac
+  shell: kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: install calico nodes
+  shell: kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

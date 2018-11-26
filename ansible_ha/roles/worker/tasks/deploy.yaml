@@ -1,0 +1,2 @@
+- name: add worker to cluster
+  shell: kubeadm join --token {{ kube_kubeadm_bootstrap_token }} {{ kube_controlplane_ip }}:{{ kube_controlplane_port }} --discovery-token-unsafe-skip-ca-verification

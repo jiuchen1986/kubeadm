@@ -1,0 +1,13 @@
+- include_tasks: init_first_master.yaml
+  when: inventory_hostname == groups['master'][0]
+
+- include_tasks: distribute_master_pki.yaml
+
+- include_tasks: init_second_master.yaml
+  when: inventory_hostname == groups['master'][1]
+
+- include_tasks: init_third_master.yaml
+  when: inventory_hostname == groups['master'][2]
+
+- include_tasks: install_calico.yaml
+  when: inventory_hostname == groups['master'][0]

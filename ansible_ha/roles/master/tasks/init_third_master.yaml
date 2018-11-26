@@ -1,0 +1,58 @@
+- name: create kubeadm dir
+  file:
+    path: "{{ kube_kubeadm_dir }}"
+    state: directory
+
+- name: copy kubeadm config
+  template:
+    src: kubeadmcfg_third_master.yaml.tpl
+    dest: "{{ kube_kubeadm_master_config }}"
+
+- name: generate certs
+  shell: "kubeadm alpha phase certs all --config {{ kube_kubeadm_master_config }}"
+
+- name: generate kubelet config
+  shell: "kubeadm alpha phase kubelet config write-to-disk --config {{ kube_kubeadm_master_config }}"
+
+- name: generate kubelet env
+  shell: "kubeadm alpha phase kubelet write-env-file --config {{ kube_kubeadm_master_config }}"
+
+- name: generate kubeconfig for kubelet
+  shell: "kubeadm alpha phase kubeconfig kubelet --config {{ kube_kubeadm_master_config }}"
+
+- name: start kubelet service
+  systemd:
+    name: kubelet
+    state: restarted
+
+- name: add local etcd to etcd cluster
+  shell: "kubectl exec -n kube-system etcd-{{ hostvars[groups['master'][0]]['ansible_hostname'] }} -- etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/peer.crt --key-file /etc/kubernetes/pki/etcd/peer.key --endpoints=https://{{ groups['master'][0] }}:2379 member add {{ ansible_hostname }} https://{{ inventory_hostname }}:2380"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf  
+
+- name: setup local etcd
+  shell: "kubeadm alpha phase etcd local --config {{ kube_kubeadm_master_config }}"
+
+- name: generate kubeconfig file
+  shell: "kubeadm alpha phase kubeconfig all --config {{ kube_kubeadm_master_config }}"
+
+- name: setup controlplane
+  shell: "kubeadm alpha phase controlplane all --config {{ kube_kubeadm_master_config }}"
+
+- name: annotate cri
+  shell: "kubeadm alpha phase kubelet config annotate-cri --config {{ kube_kubeadm_master_config }}"
+  ignore_errors: yes
+
+- name: mark master
+  shell: "kubeadm alpha phase mark-master --config {{ kube_kubeadm_master_config }}"
+
+- name: ensure /root/.kube is created
+  file:
+    path: /root/.kube
+    state: directory
+
+- name: copy admin.conf to /root/.kube
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    remote_src: yes

@@ -1,0 +1,27 @@
+- name: install haproxy by yum
+  yum:
+   name: haproxy
+   state: present
+
+- name: config haproxy
+  template:
+    src: haproxy.cfg.tpl
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: 0644
+
+- name: config haproxy service
+  copy:
+    src: haproxy.service
+    dest: /usr/lib/systemd/system/haproxy.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable and start haproxy service
+  systemd:
+    name: haproxy
+    daemon_reload: yes
+    enabled: yes
+    state: restarted

@@ -1,0 +1,30 @@
+[all]
+xxx.xxx.xxx.xxx ansible_hostname=lb-0
+xxx.xxx.xxx.xxx ansible_hostname=lb-1
+
+xxx.xxx.xxx.xxx ansible_hostname=master-0
+xxx.xxx.xxx.xxx ansible_hostname=master-1
+xxx.xxx.xxx.xxx ansible_hostname=master-2
+xxx.xxx.xxx.xxx
+xxx.xxx.xxx.xxx ansible_hostname=node-0
+xxx.xxx.xxx.xxx ansible_hostname=node-1
+
+[lb]
+xxx.xxx.xxx.xxx keepalived_role=BACKUP keepalived_priority=100
+xxx.xxx.xxx.xxx keepalived_role=MASTER keepalived_priority=102
+
+[master]
+xxx.xxx.xxx.xxx
+xxx.xxx.xxx.xxx
+xxx.xxx.xxx.xxx
+
+[etcd]
+xxx.xxx.xxx.xxx
+xxx.xxx.xxx.xxx
+xxx.xxx.xxx.xxx
+
+[worker]
+xxx.xxx.xxx.xxx
+xxx.xxx.xxx.xxx
+
+[all:vars]

@@ -1,0 +1,48 @@
+global_defs {
+
+  router_id {{ ansible_hostname }}
+  vrrp_mcast_group4 {{ keepalived_vrrp_mcast_group4 }}
+
+}
+
+vrrp_instance tu101-lb {
+
+  state {{ keepalived_role }}
+  interface {{ keepalived_interface }}
+  virtual_router_id {{ keepalived_virtual_router_id }}
+  priority {{ keepalived_priority }}
+  advert_int 1
+  authentication {
+    auth_type PASS
+    auth_pass {{ keepalived_auth_pass }}
+  }
+  virtual_ipaddress {
+    {{ keepalived_virtual_ipaddress }} dev {{ keepalived_interface }}
+  }
+
+}
+
+virtual_server {{ kube_controlplane_ip }} {{ kube_controlplane_port }} {
+
+  delay_loop {{ keepalived_delay_loop }}
+  lb_algo {{ keepalived_lb_algo }}
+  lb_kind {{ keepalived_lb_kind }}
+  protocol TCP
+  
+
+{% for rs in groups['master'] %}
+  real_server {{ hostvars[rs]['inventory_hostname'] }} {{ kube_apiserver_port }} {
+    weight 1
+    SSL_GET {
+      url {
+        path /api
+        status_code 200
+      }
+      connect_timeout {{ keepalived_connect_timeout }}
+      nb_get_retry {{ keepalived_nb_get_retry }}
+      delay_before_retry {{ keepalived_delay_before_retry }}
+    }    
+  }
+{% endfor %}
+
+}

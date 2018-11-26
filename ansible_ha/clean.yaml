@@ -1,0 +1,11 @@
+- hosts:
+  - master 
+  - worker 
+  tasks:
+  - shell: kubeadm reset -f
+  - file:
+      path: /root/.kube/config
+      state: absent
+  - file:
+      path: /etc/kubernetes/admin.conf
+      state: absent
