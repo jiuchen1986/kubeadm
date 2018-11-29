@@ -4,7 +4,7 @@ keepalived_vrrp_mcast_group4: 224.0.38.12
 keepalived_virtual_router_id: 254
 keepalived_interface: ens192
 keepalived_auth_pass: tu101
-keepalived_virtual_ipaddress: 10.210.141.250/24
+keepalived_virtual_ipaddress: xxx.xxx.xxx.xxx/24
 keepalived_delay_loop: 3
 keepalived_lb_algo: rr
 keepalived_lb_kind: NAT
@@ -25,6 +25,7 @@ etcd_kubeadm_config: "{{ etcd_kubeadm_dir }}/kubeadmcfg-etcd.yaml"
 
 kube_kubeadm_dir: /root/kubeadm/kube
 kube_kubeadm_master_config: "{{ kube_kubeadm_dir }}/kubeadmcfg-master.yaml"
+kube_kubeadm_worker_config: "{{ kube_kubeadm_dir }}/kubeadmcfg-worker.yaml"
 kube_kubeadm_bootstrap_token: "abcdef.0123456789abcdef"
 
 kube_controlplane_ip: "{{ keepalived_virtual_ipaddress.split('/')[0] }}"

@@ -43,8 +43,8 @@
   - name: use json-file log driver in docker
     shell: sed -i "s/journald/json-file/g" /etc/sysconfig/docker
 
-  - name: use cgroupfs cgroup driver in kubelet
-    shell: sed -i "s/cgroupdriver=systemd/cgroupdriver=cgroupfs/g" /usr/lib/systemd/system/docker.service
+  # - name: use cgroupfs cgroup driver in kubelet
+    # shell: sed -i "s/cgroupdriver=systemd/cgroupdriver=cgroupfs/g" /usr/lib/systemd/system/docker.service
 
   - name: start docker service
     systemd:
