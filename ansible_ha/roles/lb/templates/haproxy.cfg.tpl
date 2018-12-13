@@ -1,6 +1,7 @@
 global
   daemon
   maxconn {{ haproxy_maxconn }}
+  log  127.0.0.1  local6
 
 defaults
   mode tcp
@@ -15,6 +16,7 @@ defaults
 frontend controlplane-endpoint
   bind *:{{ kube_controlplane_port }}
   default_backend apiservers
+  log global
 
 backend apiservers
   balance roundrobin
