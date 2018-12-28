@@ -1,15 +1,15 @@
-apiVersion: kubeadm.k8s.io/v1alpha3
+apiVersion: kubeadm.k8s.io/v1beta1
 kind: JoinConfiguration
 caCertPath: /etc/kubernetes/pki/ca.crt
-clusterName: kubernetes
-discoveryFile: ""
-discoveryTimeout: 5m0s
-discoveryTokenAPIServers:
-- {{ kube_controlplane_ip }}:{{ kube_controlplane_port }}
-discoveryTokenUnsafeSkipCAVerification: true
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: {{ kube_controlplane_ip }}:{{ kube_controlplane_port }}
+    token: {{ kube_kubeadm_bootstrap_token }}
+    unsafeSkipCAVerification: true
+  timeout: 5m0s
+  tlsBootstrapToken: {{ kube_kubeadm_bootstrap_token }}
 nodeRegistration:
   criSocket: /var/run/dockershim.sock
   name: {{ ansible_hostname }}
   kubeletExtraArgs:
     runtime-cgroups: /systemd/system.slice
-token: {{ kube_kubeadm_bootstrap_token }}
