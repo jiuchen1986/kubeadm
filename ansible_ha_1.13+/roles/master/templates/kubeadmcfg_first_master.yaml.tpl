@@ -5,7 +5,7 @@ apiServer:
 apiVersion: kubeadm.k8s.io/v1beta1
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
-controlPlaneEndpoint: "{{ kube_controlplane_ip }}:{{ kube_controlplane_ip }}"
+controlPlaneEndpoint: "{{ kube_controlplane_ip }}:{{ kube_controlplane_port }}"
 dns:
   type: CoreDNS
 etcd:
