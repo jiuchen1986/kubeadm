@@ -1,0 +1,10 @@
+- hosts: all
+  become: yes
+  tasks:
+  - shell: mkdir -p /root/.ssh
+  - copy:
+      src: authorized_keys
+      dest: /root/.ssh/authorized_keys
+      owner: root
+      group: root
+      mode: 0644

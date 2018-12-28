@@ -1,0 +1,29 @@
+- name: load ip_vs module
+  modprobe:
+    name: ip_vs
+    state: present
+
+- name: load ip_vs_rr module
+  modprobe:
+    name: ip_vs_rr
+    state: present
+
+- name: load ip_vs_wrr module
+  modprobe:
+    name: ip_vs_wrr
+    state: present
+
+- name: load ip_vs_sh module
+  modprobe:
+    name: ip_vs_sh
+    state: present
+
+- name: load nf_conntrack_ipv4 module
+  modprobe:
+    name: nf_conntrack_ipv4
+    state: present
+
+- name: install ipvsadm
+  yum:
+    name: ipvsadm
+    state: present

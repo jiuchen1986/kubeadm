@@ -1,0 +1,83 @@
+- name: precreate etcd pki dir
+  file:
+    path: /etc/kubernetes/pki/etcd
+    state: directory
+    mode: 0755
+
+- name: create etcd kubeadm dir
+  file:
+    path: "{{ etcd_kubeadm_dir }}"
+    state: directory
+    mode: 0755
+
+- name: create etcd kubeadm config file
+  template:
+    src: kubeadmcfg.yaml.tpl
+    dest: "{{ etcd_kubeadm_config }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- block:
+
+  - name: create etcd ca on first etcd node
+    shell: kubeadm alpha phase certs etcd-ca
+
+  - name: fetch the etcd ca.key to local
+    fetch:
+      src: /etc/kubernetes/pki/etcd/ca.key
+      dest: /tmp/etcd-ca.key
+      flat: yes
+
+  - name: fetch the etcd ca.crt to local
+    fetch:
+      src: /etc/kubernetes/pki/etcd/ca.crt
+      dest: /tmp/etcd-ca.crt
+      flat: yes 
+
+  when: inventory_hostname == groups['etcd'][0]
+
+- block:
+
+  - name: copy the etcd ca.key
+    copy:
+      dest: /etc/kubernetes/pki/etcd/ca.key
+      src: /tmp/etcd-ca.key
+
+  - name: copy the etcd ca.crt
+    copy:
+      dest: /etc/kubernetes/pki/etcd/ca.crt
+      src: /tmp/etcd-ca.crt 
+
+  when: inventory_hostname != groups['etcd'][0]
+
+- name: create etcd server pki
+  shell: "kubeadm alpha phase certs etcd-server --config={{ etcd_kubeadm_config }}"
+
+- name: create etcd peer pki
+  shell: "kubeadm alpha phase certs etcd-peer --config={{ etcd_kubeadm_config }}"
+
+- name: create etcd healthcheck client pki
+  shell: "kubeadm alpha phase certs etcd-healthcheck-client --config={{ etcd_kubeadm_config }}"
+
+- name: create apiserver etcd client pki
+  shell: "kubeadm alpha phase certs apiserver-etcd-client --config={{ etcd_kubeadm_config }}"
+
+- name: setup etcd static pod
+  shell: "kubeadm alpha phase etcd local --config={{ etcd_kubeadm_config }}"
+
+- block:
+
+  - name: remove the local etcd ca cert
+    delegate_to: localhost
+    file:
+      path: /tmp/etcd-ca.crt
+      state: absent
+
+  - name: remove the local etcd ca key
+    delegate_to: localhost
+    file:
+      path: /tmp/etcd-ca.key
+      state: absent
+
+  when: inventory_hostname == groups['etcd'][0]

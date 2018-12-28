@@ -1,0 +1,14 @@
+- include_tasks: init_first_master.yaml
+  when: inventory_hostname == groups['master'][0]
+
+- block:
+
+  - include_tasks: distribute_master_pki.yaml
+  
+  - include_tasks: join_other_master.yaml
+    when: inventory_hostname != groups['master'][0]
+  
+  when: kube_deploy_mode == 'ha'
+
+- include_tasks: install_calico.yaml
+  when: inventory_hostname == groups['master'][0]

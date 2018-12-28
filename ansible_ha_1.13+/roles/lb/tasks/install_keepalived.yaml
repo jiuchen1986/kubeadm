@@ -1,0 +1,18 @@
+- name: install keepalived by yum
+  yum:
+   name: keepalived
+   state: present
+
+- name: config keepalived
+  template:
+    src: keepalived.conf.tpl
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable and start keepalived service
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: restarted

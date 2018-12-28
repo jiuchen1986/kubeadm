@@ -1,0 +1,176 @@
+- block:
+ 
+  - name: fetch etcd ca cert to local
+    fetch:
+      src: /etc/kubernetes/pki/etcd/ca.crt
+      dest: /tmp/etcd-ca.crt
+      flat: yes
+
+  - name: fetch etcd ca key to local
+    fetch:
+      src: /etc/kubernetes/pki/etcd/ca.key
+      dest: /tmp/etcd-ca.key
+      flat: yes
+
+  - name: fetch kube ca cert to local
+    fetch:
+      src: /etc/kubernetes/pki/ca.crt
+      dest: /tmp/kube-ca.crt
+      flat: yes
+
+  - name: fetch kube ca key to local
+    fetch:
+      src: /etc/kubernetes/pki/ca.key
+      dest: /tmp/kube-ca.key
+      flat: yes
+
+  - name: fetch kube sa pub key to local
+    fetch:
+      src: /etc/kubernetes/pki/sa.pub
+      dest: /tmp/kube-sa.pub
+      flat: yes
+
+  - name: fetch kube sa key to local
+    fetch:
+      src: /etc/kubernetes/pki/sa.key
+      dest: /tmp/kube-sa.key
+      flat: yes
+
+  - name: fetch kube front proxy ca cert to local
+    fetch:
+      src: /etc/kubernetes/pki/front-proxy-ca.crt
+      dest: /tmp/kube-front-proxy-ca.crt
+      flat: yes
+
+  - name: fetch kube front proxy ca key to local
+    fetch:
+      src: /etc/kubernetes/pki/front-proxy-ca.key
+      dest: /tmp/kube-front-proxy-ca.key
+      flat: yes
+
+  - name: create local kube dir
+    delegate_to: localhost
+    file:
+      path: /root/.kube
+      state: directory
+
+  - name: fetch admin.conf to local
+    fetch:
+      src: /etc/kubernetes/admin.conf
+      dest: /root/.kube/config
+      flat: yes
+
+  when: inventory_hostname == groups['master'][0]
+
+- block:
+
+  - name: precreate kube pki dir 
+    file: 
+      path: /etc/kubernetes/pki 
+      state: directory 
+ 
+  - name: precreate kube etcd pki dir 
+    file: 
+      path: /etc/kubernetes/pki/etcd 
+      state: directory 
+
+
+  - name: copy etcd ca cert
+    copy:
+      dest: /etc/kubernetes/pki/etcd/ca.crt
+      src: /tmp/etcd-ca.crt
+  
+  - name: copy etcd ca key
+    copy:
+      dest: /etc/kubernetes/pki/etcd/ca.key
+      src: /tmp/etcd-ca.key
+
+  - name: copy kube ca cert
+    copy:
+      dest: /etc/kubernetes/pki/ca.crt
+      src: /tmp/kube-ca.crt
+  
+  - name: copy kube ca key
+    copy:
+      dest: /etc/kubernetes/pki/ca.key
+      src: /tmp/kube-ca.key
+  
+  - name: copy kube sa pub key
+    copy:
+      dest: /etc/kubernetes/pki/sa.pub
+      src: /tmp/kube-sa.pub
+  
+  - name: copy kube sa key
+    copy:
+      dest: /etc/kubernetes/pki/sa.key
+      src: /tmp/kube-sa.key
+  
+  - name: copy kube front proxy ca cert
+    copy:
+      dest: /etc/kubernetes/pki/front-proxy-ca.crt
+      src: /tmp/kube-front-proxy-ca.crt
+  
+  - name: copy kube front proxy ca key
+    copy:
+      dest: /etc/kubernetes/pki/front-proxy-ca.key
+      src: /tmp/kube-front-proxy-ca.key
+
+  - name: copy kube admin.conf
+    copy:
+      dest: /etc/kubernetes/admin.conf
+      src: /root/.kube/config
+
+  when: inventory_hostname != groups['master'][0]
+
+
+- block:
+
+  - name: remove local etcd ca cert
+    delegate_to: localhost
+    file:
+      path: /tmp/etcd-ca.crt
+      state: absent
+  
+  - name: remove local etcd ca key
+    delegate_to: localhost
+    file:
+      path: /tmp/etcd-ca.key
+      state: absent
+
+  - name: remove local kube ca cert
+    delegate_to: localhost
+    file:
+      path: /tmp/kube-ca.crt
+      state: absent
+  
+  - name: remove local kube ca key
+    delegate_to: localhost
+    file:
+      path: /tmp/kube-ca.key
+      state: absent
+  
+  - name: remove local kube sa pub key
+    delegate_to: localhost
+    file:
+      path: /tmp/kube-sa.pub
+      state: absent
+  
+  - name: remove local kube sa key
+    delegate_to: localhost
+    file:
+      path: /tmp/kube-sa.key
+      state: absent
+  
+  - name: remove local kube front proxy ca cert
+    delegate_to: localhost
+    file:
+      path: /tmp/kube-front-proxy-ca.crt
+      state: absent
+  
+  - name: remove local kube front proxy ca key
+    delegate_to: localhost
+    file:
+      path: /tmp/kube-front-proxy-ca.key
+      state: absent
+
+  when: inventory_hostname == groups['master'][0]

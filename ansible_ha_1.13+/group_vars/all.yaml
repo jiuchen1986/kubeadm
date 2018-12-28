@@ -1,0 +1,38 @@
+crictl_version: v1.13.0
+
+keepalived_vrrp_mcast_group4: 224.0.38.12
+keepalived_virtual_router_id: 254
+keepalived_interface: ens192
+keepalived_auth_pass: tu101
+keepalived_virtual_ipaddress: xxx.xxx.xxx.xxx/24
+keepalived_delay_loop: 3
+keepalived_lb_algo: rr
+keepalived_lb_kind: NAT
+keepalived_connect_timeout: 5
+keepalived_nb_get_retry: 3
+keepalived_delay_before_retry: 2
+
+haproxy_timeout_connect: 5s
+haproxy_timeout_server: 100s
+haproxy_timeout_client: 100s
+haproxy_timeout_check: 5s
+haproxy_maxconn: 5000
+haproxy_retries: 3
+haproxy_inter: 15s
+
+etcd_kubeadm_dir: /root/kubeadm/etcd
+etcd_kubeadm_config: "{{ etcd_kubeadm_dir }}/kubeadmcfg-etcd.yaml"
+
+# single or ha
+kube_deploy_mode: ha
+
+kube_kubeadm_dir: /root/kubeadm/kube
+kube_kubeadm_master_config: "{{ kube_kubeadm_dir }}/kubeadmcfg-master.yaml"
+kube_kubeadm_worker_config: "{{ kube_kubeadm_dir }}/kubeadmcfg-worker.yaml"
+kube_kubeadm_bootstrap_token: "abcdef.0123456789abcdef"
+
+kube_controlplane_ip: "{{ keepalived_virtual_ipaddress.split('/')[0] }}"
+kube_controlplane_port: 6443
+
+kube_apiserver_port: 6443
+

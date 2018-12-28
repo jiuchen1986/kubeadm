@@ -1,0 +1,48 @@
+- name: install haproxy by yum
+  yum:
+   name: haproxy
+   state: present
+
+- name: config sysconfig of rsyslog
+  lineinfile:
+    path: /etc/sysconfig/rsyslog
+    regexp: '^SYSLOGD_OPTIONS='
+    line: 'SYSLOGD_OPTIONS=\"-r -m 0\"'
+
+- name: config rsyslog for haproxy log
+  copy:
+    src: haproxy_log.conf
+    dest: /etc/rsyslog.d/haproxy_log.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: config haproxy
+  template:
+    src: haproxy.cfg.tpl
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: 0644
+
+- name: config haproxy service
+  copy:
+    src: haproxy.service
+    dest: /usr/lib/systemd/system/haproxy.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable and start rsyslog service
+  systemd:
+    name: rsyslog
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+
+- name: enable and start haproxy service
+  systemd:
+    name: haproxy
+    daemon_reload: yes
+    enabled: yes
+    state: restarted

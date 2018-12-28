@@ -1,0 +1,7 @@
+- name: create kubeadm dir
+  file:
+    path: "{{ kube_kubeadm_dir }}"
+    state: directory
+
+- name: add worker to cluster
+  shell: kubeadm join {{ kube_controlplane_ip }}:{{ kube_controlplane_port }} --token {{ kube_kubeadm_bootstrap_token }} --discovery-token-unsafe-skip-ca-verification --experimental-control-plane

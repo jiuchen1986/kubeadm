@@ -1,0 +1,23 @@
+- name: create kubeadm dir
+  file:
+    path: "{{ kube_kubeadm_dir }}"
+    state: directory
+
+- name: copy kubeadm config
+  template:
+    src: kubeadmcfg_first_master.yaml.tpl
+    dest: "{{ kube_kubeadm_master_config }}"
+
+- name: init master
+  shell: "kubeadm init --config {{ kube_kubeadm_master_config }}"
+
+- name: ensure /root/.kube is created
+  file:
+    path: /root/.kube
+    state: directory
+
+- name: copy admin.conf to /root/.kube
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    remote_src: yes
