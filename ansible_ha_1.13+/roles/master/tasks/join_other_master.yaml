@@ -8,5 +8,5 @@
     src: kubeadmcfg_other_master.yaml.tpl
     dest: "{{ kube_kubeadm_master_config }}"
 
-- name: add worker to cluster
+- name: add additional master to cluster
   shell: kubeadm join  --config {{ kube_kubeadm_master_config }} --experimental-control-plane

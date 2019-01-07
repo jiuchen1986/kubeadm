@@ -8,6 +8,10 @@ discovery:
     unsafeSkipCAVerification: true
   timeout: 5m0s
   tlsBootstrapToken: {{ kube_kubeadm_bootstrap_token }}
+controlPlane:
+  localAPIEndpoint:
+    advertiseAddress: {{ inventory_hostname }}
+    bindPort: {{ kube_apiserver_port }}
 nodeRegistration:
   criSocket: /var/run/dockershim.sock
   name: {{ ansible_hostname }}
